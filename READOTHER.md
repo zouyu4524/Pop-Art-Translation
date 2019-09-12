@@ -142,7 +142,7 @@ $$
 {\bf W}_ t = {\bf W}_ {t-1} + \alpha_t {\boldsymbol \delta}_ t h_ { { \boldsymbol \theta}_ t} (X_t)^\intercal,
 $$
 
-> where ${\boldsymbol \sigma}_ t = f_ { {\boldsymbol \theta}, {\bf W}, {\boldsymbol b} } (X) - Y_t$ is gradient of the squared loss, which we here call **unnormalized error**. The magnitude of this update depends linearly on the magnitude of the error, which is appropriate when the inputs are normalized, because then the ideal scale of the weights depends linearly on the magnitude of the targets.
+> where ${\boldsymbol \delta}_ t = f_ { {\boldsymbol \theta}, {\bf W}, {\boldsymbol b} } (X) - Y_t$ is gradient of the squared loss, which we here call **unnormalized error**. The magnitude of this update depends linearly on the magnitude of the error, which is appropriate when the inputs are normalized, because then the ideal scale of the weights depends linearly on the magnitude of the targets.
 
 本段着手分析最后一层的权重(${\bf W}$)的更新与误差项($f_ { {\boldsymbol \theta}, {\bf W}, {\boldsymbol b} } (X) - Y_t$)之间的关系, 指出权重的更新规模与误差项的规模呈线性关系。进一步误差项本身的规模又与target的规模呈线性关系。正常情况下(即target的规模在相对小的范围内时), 以上的更新是没问题的。
 
