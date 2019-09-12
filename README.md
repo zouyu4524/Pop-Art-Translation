@@ -17,7 +17,7 @@ Hado van Hasselt, Arthur Guez, Matteo Hessel, Volodymyr Mnih, David Silver. "Lea
 
 <p align="center"><img alt="$$&#10;\tilde{Y}_ t = {\boldsymbol \Sigma}_ t^{-1} (Y_ t - {\boldsymbol \mu}_ t),&#10;$$" src="svgs/22fc937d416e5d5eba720ba16636ce1f.svg" align="middle" width="138.74784pt" height="19.24329pt"/></p>
 
-本文的核心思路是将学习标准化过程与函数拟合两个过程分离开, 具体分离的方式是在原有的函数拟合网络下接一层**affine transformation**(线性变换)。原有的函数负责学习函数拟合, 而下接的一层线性变换层负责"跟踪"|学习标准化的参数。
+本文的核心思路是将学习**标准化**与**函数拟合**两个过程分离开, 具体分离的方式是在原有的函数拟合网络下接一层**affine transformation**(线性变换)。原有的函数负责学习函数拟合, 而下接的一层线性变换层负责"跟踪"|学习标准化的参数。
 
 > We can then define a loss on a normalized function <img alt="$g(X_t)$" src="svgs/b76f93b526e06c1b9208513d17d87503.svg" align="middle" width="40.62234pt" height="24.65759999999998pt"/> and the normalized target <img alt="$\tilde{Y}_ T$" src="svgs/73ac43eb7799407056d01ec72c6c80e7.svg" align="middle" width="19.077135000000002pt" height="30.267599999999987pt"/>. THe unnormalized approximation for any input <img alt="$x$" src="svgs/332cc365a4987aacce0ead01b8bdcc0b.svg" align="middle" width="9.395100000000005pt" height="14.155350000000013pt"/> is then given by <img alt="$f(x) = {\boldsymbol \Sigma} g(x) + {\boldsymbol \mu}$" src="svgs/1d9424936f715c8f631977f52b3f57a2.svg" align="middle" width="129.906645pt" height="24.65759999999998pt"/>, where <img alt="$g$" src="svgs/3cf4fbd05970446973fc3d9fa3fe3c41.svg" align="middle" width="8.430510000000004pt" height="14.155350000000013pt"/> is the *normalized function* and <img alt="$f$" src="svgs/190083ef7a1625fbc75f243cffb9c96d.svg" align="middle" width="9.817500000000004pt" height="22.831379999999992pt"/> is the *unnormalized function*.
 
@@ -73,7 +73,7 @@ Hado van Hasselt, Arthur Guez, Matteo Hessel, Volodymyr Mnih, David Silver. "Lea
 在此基础上, 算法1以MSE为loss函数, SGD为optimizer为例阐述了如何实现Pop-Art算法。其中主要分为三个阶段:  
 
 - 更新标准化参数(Pop)  
-- 更新函数拟合模型内层(<img alt="$h_ { {\boldsymbol \theta} }$" src="svgs/0c212e3dd00bcc0be7e55ad560026ac6.svg" align="middle" width="17.113965000000004pt" height="22.831379999999992pt"/>), 算法中红框标注部分  
+- 更新函数拟合模型内层(<img alt="$h_ { {\boldsymbol \theta} }$" src="svgs/0c212e3dd00bcc0be7e55ad560026ac6.svg" align="middle" width="17.113965000000004pt" height="22.831379999999992pt"/>), (算法中红框标注部分)  
 - 由SDG更新标准化层参数
 
 **小结**: 本节主要阐述了Pop-Art算法中的Pop部分, 即如何更新标准化参数以保证后续的训练可以保障不影响已有输出的结果。另一方面, 通过算法1给出了结合Pop-Art的网络更新流程, 其中标准化层的参数将被更新两次, 第一次为保障Pop, 第二次为优化算法下的参数更新。

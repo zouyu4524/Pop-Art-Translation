@@ -19,7 +19,7 @@ $$
 \tilde{Y}_ t = {\boldsymbol \Sigma}_ t^{-1} (Y_ t - {\boldsymbol \mu}_ t),
 $$
 
-本文的核心思路是将学习标准化过程与函数拟合两个过程分离开, 具体分离的方式是在原有的函数拟合网络下接一层**affine transformation**(线性变换)。原有的函数负责学习函数拟合, 而下接的一层线性变换层负责"跟踪"|学习标准化的参数。
+本文的核心思路是将学习**标准化**与**函数拟合**两个过程分离开, 具体分离的方式是在原有的函数拟合网络下接一层**affine transformation**(线性变换)。原有的函数负责学习函数拟合, 而下接的一层线性变换层负责"跟踪"|学习标准化的参数。
 
 > We can then define a loss on a normalized function $g(X_t)$ and the normalized target $\tilde{Y}_ T$. THe unnormalized approximation for any input $x$ is then given by $f(x) = {\boldsymbol \Sigma} g(x) + {\boldsymbol \mu}$, where $g$ is the *normalized function* and $f$ is the *unnormalized function*.
 
@@ -83,7 +83,7 @@ $$
 在此基础上, 算法1以MSE为loss函数, SGD为optimizer为例阐述了如何实现Pop-Art算法。其中主要分为三个阶段:  
 
 - 更新标准化参数(Pop)  
-- 更新函数拟合模型内层($h_ { {\boldsymbol \theta} }$), 算法中红框标注部分  
+- 更新函数拟合模型内层($h_ { {\boldsymbol \theta} }$), (算法中红框标注部分)  
 - 由SDG更新标准化层参数
 
 **小结**: 本节主要阐述了Pop-Art算法中的Pop部分, 即如何更新标准化参数以保证后续的训练可以保障不影响已有输出的结果。另一方面, 通过算法1给出了结合Pop-Art的网络更新流程, 其中标准化层的参数将被更新两次, 第一次为保障Pop, 第二次为优化算法下的参数更新。
