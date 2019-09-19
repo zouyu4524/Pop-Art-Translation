@@ -1,0 +1,13 @@
+# ignore pycharm project settings
+.idea
+
+# ignore pycache
+__pycache__
+
+# pickle files
+*.pkl
+!dataset.pkl
+
+# matlab tmp files
+*.asv
+
