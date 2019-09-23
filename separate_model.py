@@ -65,11 +65,20 @@ if __name__ == "__main__":
     lower_layer = LowerLayers(16, 10)
     upper_layer = UpperLayer(10, 1)
 
-    loss_lower = lower_layer(sample_x)  # intermediate output of the lower layers
-    with torch.no_grad():
-        delta = upper_layer(lower_layer(sample_x)) - sample_y
+    opt_lower = torch.optim.SGD(lower_layer.parameters(), lr)
+    opt_upper = torch.optim.SGD(upper_layer.parameters(), lr)
 
-    loss_lower.backward([2* delta * upper_layer.output_linear.weight])
+    loss_func = torch.nn.MSELoss()
+    loss = loss_func(upper_layer(lower_layer(sample_x)), sample_y)
+
+    # loss_lower = lower_layer(sample_x)  # intermediate output of the lower layers
+    # with torch.no_grad():
+    #     delta = upper_layer(lower_layer(sample_x)) - sample_y
+    #
+    # loss_lower.backward([2* delta * upper_layer.output_linear.weight])
+    loss.backward()
+    opt_lower.step()
+    opt_upper.step()
 
     with torch.no_grad():
         # for i, para in enumerate(lower_layer.parameters()):
@@ -79,15 +88,17 @@ if __name__ == "__main__":
         #         pass
         #     else:
         #         para -= 2 * lr * para.grad * upper_layer.output_linear.weight.t() * delta
-        for para in lower_layer.parameters():
-            para -= lr * para.grad
+        # for para in lower_layer.parameters():
+        #     para -= lr * para.grad
 
         # print(lower_layer.hidden1.weight[-1, :])
         # print(lower_layer.hidden2.weight[-1, :])
         # print(lower_layer.hidden3.weight[-1, :])
-        print(lower_layer.hidden1.bias)
-        print(lower_layer.hidden2.bias)
-        print(lower_layer.hidden3.bias)
+        # print(lower_layer.hidden1.bias)
+        # print(lower_layer.hidden2.bias)
+        # print(lower_layer.hidden3.bias)
+        print(upper_layer.output_linear.weight)
+        print(upper_layer.output_linear.bias)
 
     # case 2: unified model
     torch.manual_seed(0)
@@ -105,6 +116,8 @@ if __name__ == "__main__":
         # print(unified_layer.hidden1.weight[-1, :])
         # print(unified_layer.hidden2.weight[-1, :])
         # print(unified_layer.hidden3.weight[-1, :])
-        print(unified_layer.hidden1.bias)
-        print(unified_layer.hidden2.bias)
-        print(unified_layer.hidden3.bias)
+        # print(unified_layer.hidden1.bias)
+        # print(unified_layer.hidden2.bias)
+        # print(unified_layer.hidden3.bias)
+        print(unified_layer.output_linear.weight)
+        print(unified_layer.output_linear.bias)
