@@ -68,7 +68,7 @@ class NormalizedSGD:
         self.lr = 10. ** (-2.5)
         self.loss_func = torch.nn.MSELoss()
         self.loss = None
-        self.intermediate = None  # store output of lower layers
+        # self.intermediate = None  # store output of lower layers
         self.y = None
         self.opt_lower = torch.optim.SGD(self.lower_layers.parameters(), self.lr)
         self.opt_upper = torch.optim.SGD(self.upper_layer.parameters(), self.lr)
@@ -95,15 +95,14 @@ class NormalizedSGD:
         return y_pred
 
     def backward(self):
-        # backward for lower layers
-        self.normalize()
         self.opt_lower.zero_grad()
-        self.loss.backward()
-        # backward for upper layer
-        self.denormalize()
-        loss = self.loss_func(self.upper_layer(self.intermediate), self.y)
         self.opt_upper.zero_grad()
-        loss.backward()
+        # scale weights of upper layer
+        self.normalize()
+        self.loss.backward()
+        # scale back weights of upper layer
+        self.denormalize()
+
 
     def step(self):
         self.opt_lower.step()
