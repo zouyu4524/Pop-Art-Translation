@@ -7,7 +7,7 @@ with open('SGD.pkl', 'rb') as f:
     l = pickle.load(f)
     u = pickle.load(f)
 
-with open('ART-3.5.pkl', 'rb') as f:
+with open('ART.pkl', 'rb') as f:
     samples_ = pickle.load(f)
     m_ = pickle.load(f)
     l_ = pickle.load(f)

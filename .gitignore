@@ -7,6 +7,9 @@ __pycache__
 # pickle files
 *.pkl
 !dataset-with-weired-value.pkl
+!ART.pkl
+!SGD.pkl
+!PopArt.pkl
 
 # matlab tmp files
 *.asv
