@@ -111,7 +111,7 @@ class NormalizedSGD:
 
 if __name__ == "__main__":
 
-    with open('dataset-with-weired-value.pkl', 'rb') as f:
+    with open('../dataset/dataset-with-weired-value.pkl', 'rb') as f:
         x = pickle.load(f)
         y = pickle.load(f)
 

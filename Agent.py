@@ -1,5 +1,5 @@
 import torch
-from separate_model import LowerLayers, UpperLayer
+from discard.separate_model import LowerLayers, UpperLayer
 from utils import *
 import time
 import argparse
@@ -121,7 +121,7 @@ if __name__ == "__main__":
         os.system("python dataset_generator.py -s {seed:d}".format(seed=seed))
 
         # load dataset
-        with open('dataset-with-weired-value.pkl', 'rb') as f:
+        with open('dataset/dataset-with-weired-value.pkl', 'rb') as f:
             x = pickle.load(f)
             y = pickle.load(f)
 
