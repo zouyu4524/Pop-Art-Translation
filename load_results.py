@@ -1,19 +1,19 @@
 import pickle
 import matplotlib.pyplot as plt
 
-with open('SGD.pkl', 'rb') as f:
+with open('results/SGD.pkl', 'rb') as f:
     samples = pickle.load(f)
     m = pickle.load(f)
     l = pickle.load(f)
     u = pickle.load(f)
 
-with open('ART.pkl', 'rb') as f:
+with open('results/ART.pkl', 'rb') as f:
     samples_ = pickle.load(f)
     m_ = pickle.load(f)
     l_ = pickle.load(f)
     u_ = pickle.load(f)
 
-with open('PopArt.pkl', 'rb') as f:
+with open('results/PopArt.pkl', 'rb') as f:
     samples__ = pickle.load(f)
     m__ = pickle.load(f)
     l__ = pickle.load(f)

@@ -32,6 +32,6 @@ if __name__ == "__main__":
         dec2bin(target, n=16) for target in y
     ])
 
-    with open('dataset-with-weired-value.pkl', 'wb') as f:
+    with open('dataset/dataset-with-weired-value.pkl', 'wb') as f:
         pickle.dump(x, f)
         pickle.dump(y, f)
