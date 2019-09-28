@@ -112,8 +112,8 @@ class SGD_only(Basic):
 class Art_only(Basic):
     def __init__(self, lr):
         super().__init__(lr)
-        self.mu = None
-        self.nu = None
+        self.mu = 0.
+        self.nu = 1.
         self.beta = 10.0**(-4.)
 
     def normalize(self, y):
@@ -129,9 +129,9 @@ class Art_only(Basic):
 
     def training_model(self, x, y):
         rmse = []
-        self.mu = y[0]
-        self.nu = (y[0]*1.0)**2
-        for i in range(1, len(x)):
+        # self.mu = y[0]
+        # self.nu = (y[0]*1.0)**2
+        for i in range(0, len(x)):
             # update mu and nu
             self.update_statics(y[i])
 
@@ -169,73 +169,76 @@ class Pop_Art:
 
 if __name__ == "__main__":
 
-    torch.manual_seed(0)
-    lower_layer = LowerLayers(16, 10)
-    upper_layer = UpperLayer(10, 1)
-
-    # unified_layer = UnifiedModel(16, 10, 1)
-
-    with open('dataset-with-weired-value.pkl', 'rb') as f:
-        x = pickle.load(f)
-        y = pickle.load(f)
-
-    sample_x = torch.tensor(x[0], dtype=torch.float)
-    sample_y = torch.tensor([y[0]], dtype=torch.float)
-
-    # loss_func = torch.nn.MSELoss()
+    # torch.manual_seed(0)
+    # lower_layer = LowerLayers(16, 10)
+    # upper_layer = UpperLayer(10, 1)
     #
-    # loss = loss_func(unified_layer(sample_x), sample_y)
+    # # unified_layer = UnifiedModel(16, 10, 1)
+    #
+    # with open('dataset-with-weired-value.pkl', 'rb') as f:
+    #     x = pickle.load(f)
+    #     y = pickle.load(f)
+    #
+    # sample_x = torch.tensor(x[0], dtype=torch.float)
+    # sample_y = torch.tensor([y[0]], dtype=torch.float)
+    #
+    # # loss_func = torch.nn.MSELoss()
+    # #
+    # # loss = loss_func(unified_layer(sample_x), sample_y)
+    #
+    # # loss.backward()
+    # loss_lower = lower_layer(sample_x).sum()
+    # with torch.no_grad():
+    #     delta = upper_layer(lower_layer(sample_x)) - sample_y
+    #
+    # lr = 0.1
+    # loss_lower.backward()
+    #
+    # with torch.no_grad():
+    #     for i, para in enumerate(lower_layer.parameters()):
+    #         if i % 2 == 1:
+    #             continue
+    #         para -= 2 * lr * para.grad * upper_layer.output_linear.weight.t() * delta
+    #
+    # #
+    # # output_intermediate = lower_layer(sample_x).sum()
+    # # output_intermediate.backward()
+    # # # for out in output_intermediate:
+    # # #     out.backward()
+    # #
+    # # for j in lower_layer.parameters():
+    # #     print(j.grad)
+    #
+    learning_rate = 0.5*10.0 ** (-4.5)
 
-    # loss.backward()
-    loss_lower = lower_layer(sample_x).sum()
-    with torch.no_grad():
-        delta = upper_layer(lower_layer(sample_x)) - sample_y
+    rmses = []
+    for seed in range(50):
+        print("Running for seed {:d}.".format(seed))
+        start_tic = time.time()
+        # build network
+        torch.manual_seed(seed)
+        # model, loss_func, optimizer = build_model(learning_rate)
+        agent = SGD_only(learning_rate)
 
-    lr = 0.1
-    loss_lower.backward()
+        # generate dataset
+        os.system("python dataset_generator.py -s {seed:d}".format(seed=seed))
 
-    with torch.no_grad():
-        for i, para in enumerate(lower_layer.parameters()):
-            if i % 2 == 1:
-                continue
-            para -= 2 * lr * para.grad * upper_layer.output_linear.weight.t() * delta
+        # load dataset
+        with open('dataset-with-weired-value.pkl', 'rb') as f:
+            x = pickle.load(f)
+            y = pickle.load(f)
 
-    #
-    # output_intermediate = lower_layer(sample_x).sum()
-    # output_intermediate.backward()
-    # # for out in output_intermediate:
-    # #     out.backward()
-    #
-    # for j in lower_layer.parameters():
-    #     print(j.grad)
+        rmse = agent.training_model(x, y)
+        rmses.append(rmse)
+        print("Time elapsed {:.2f} seconds for run {:d}.".format(time.time()-start_tic, seed))
 
-    # learning_rate = 10.0 ** (-3.5)
-    #
-    # rmses = []
-    # for seed in range(50):
-    #     print("Running for seed {:d}.".format(seed))
-    #     start_tic = time.time()
-    #     # build network
-    #     torch.manual_seed(seed)
-    #     # model, loss_func, optimizer = build_model(learning_rate)
-    #     agent = Art_only(learning_rate)
-    #
-    #     # generate dataset
-    #     os.system("python dataset_generator.py -s {seed:d}".format(seed=seed))
-    #
-    #     # load dataset
-    #     with open('dataset-with-weired-value.pkl', 'rb') as f:
-    #         x = pickle.load(f)
-    #         y = pickle.load(f)
-    #
-    #     rmse = agent.training_model(x, y)
-    #     rmses.append(rmse)
-    #     print("Time elapsed {:.2f} seconds for run {:d}.".format(time.time()-start_tic, seed))
-    #
-    # m, l, u = median_and_percentile(rmses, axis=0)
-    # fig = plt.figure()
-    # spl = fig.add_subplot(111)
-    # spl.plot(m, color='C0')
-    # spl.fill_between(np.linspace(0, 4994, 4994, dtype=int), u, l, facecolor='blue', alpha=0.5)
-    # spl.set_yscale("log")
-    # plt.show()
+    m, l, u = median_and_percentile(rmses, axis=0)
+    fig = plt.figure()
+    spl = fig.add_subplot(111)
+    spl.plot(m, color='C0')
+    spl.fill_between(np.linspace(0, 4995, 4995, dtype=int), u, l, facecolor='blue', alpha=0.5)
+    spl.set_yscale("log")
+    plt.show()
+
+    samples = np.linspace(0, 4995, 4995, dtype=int)
+    save_results('SGD-only-0.5_lr=4.5.pkl', samples, m, l, u)

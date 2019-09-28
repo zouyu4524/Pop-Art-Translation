@@ -1,5 +1,5 @@
 import torch
-from separate_model import LowerLayers, UpperLayer, UnifiedModel
+from separate_model import LowerLayers, UpperLayer
 import numpy as np
 import pickle
 
@@ -14,7 +14,7 @@ class PopArt:
         self.mu_new = None
         self.nu = self.sigma**2 + self.mu**2 # second-order moment
         self.beta = 10.**(-0.5)
-        self.lr = 10.**(-2.5)
+        self.lr = 0.5*10.**(-2.5)
         self.loss_func = torch.nn.MSELoss()
         self.loss = None
         self.opt_lower = torch.optim.SGD(self.lower_layers.parameters(), self.lr)
@@ -65,7 +65,7 @@ class NormalizedSGD:
         self.mu = torch.tensor(0., dtype=torch.float)
         self.nu = self.sigma ** 2 + self.mu ** 2  # second-order moment
         self.beta = 10. ** (-0.5)
-        self.lr = 10. ** (-2.5)
+        self.lr = 0.5*10. ** (-2.5)
         self.loss_func = torch.nn.MSELoss()
         self.loss = None
         # self.intermediate = None  # store output of lower layers
