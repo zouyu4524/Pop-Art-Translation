@@ -5,18 +5,18 @@ PyTorch的实现方式决定了在实现机器学习相关算法时相较于Tens
 <!-- MarkdownTOC autolink="true" -->
 
 - [验证](#%E9%AA%8C%E8%AF%81)
-    - [对应的操作](#%E5%AF%B9%E5%BA%94%E7%9A%84%E6%93%8D%E4%BD%9C)
-    - [实验结果](#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C)
-    - [小结](#%E5%B0%8F%E7%BB%93)
-    - [杂项](#%E6%9D%82%E9%A1%B9)
+	- [对应的操作](#%E5%AF%B9%E5%BA%94%E7%9A%84%E6%93%8D%E4%BD%9C)
+	- [实验结果](#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C)
+	- [小结](#%E5%B0%8F%E7%BB%93)
+	- [杂项](#%E6%9D%82%E9%A1%B9)
 - [算法实现](#%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0)
-    - [算法概述](#%E7%AE%97%E6%B3%95%E6%A6%82%E8%BF%B0)
-    - [实验结果](#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C-1)
+	- [算法概述](#%E7%AE%97%E6%B3%95%E6%A6%82%E8%BF%B0)
+	- [实验结果](#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C-1)
 - [结果复现](#%E7%BB%93%E6%9E%9C%E5%A4%8D%E7%8E%B0)
-    - [数据集与测试方法](#%E6%95%B0%E6%8D%AE%E9%9B%86%E4%B8%8E%E6%B5%8B%E8%AF%95%E6%96%B9%E6%B3%95)
-    - [算法实现小结](#%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%B0%8F%E7%BB%93)
-    - [杂项](#%E6%9D%82%E9%A1%B9-1)
-    - [结果](#%E7%BB%93%E6%9E%9C)
+	- [数据集与测试方法](#%E6%95%B0%E6%8D%AE%E9%9B%86%E4%B8%8E%E6%B5%8B%E8%AF%95%E6%96%B9%E6%B3%95)
+	- [算法实现小结](#%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%B0%8F%E7%BB%93)
+	- [杂项](#%E6%9D%82%E9%A1%B9-1)
+	- [结果](#%E7%BB%93%E6%9E%9C)
 
 <!-- /MarkdownTOC -->
 
@@ -222,7 +222,12 @@ tensor([3.9995])
 
 实际上, 对比三个算法的差异, 结合算法1中的流程, 可以一套代码实现三个算法, 差异仅仅在于以下两步: 
 
-<p align="center"><img alt="$$&#10;\begin{aligned}&#10;{\bf ART:~ } &amp;\mu_t = (1-\beta_t) \mu_{t-1} +\beta_t Y_t ~ \text{and}~\sigma_t^2 = \nu_t - \mu_t^2,~\text{where}~\nu_t = (1 - \beta_t) \nu_{t-1} + \beta_t Y_t^2\\&#10;{\bf POP:~ } &amp;{\bf W}_ \text{new} = {\boldsymbol \Sigma}_ \text{new}^{-1} {\boldsymbol \Sigma} {\bf W} \quad \text{and} \quad {\boldsymbol b}_ \text{new} = {\boldsymbol \Sigma}_ \text{new}^{-1} \left( {\boldsymbol \Sigma b + \mu - \mu}_ \text{new} \right)&#10;\end{aligned}&#10;$$" src="svgs/2aa821460d47f2ebfbb4e8eea5a67a44.svg" align="middle" width="602.0255999999999pt" height="45.435719999999996pt"/></p>
+$$
+\begin{aligned}
+{\bf ART:~ } &\mu_t = (1-\beta_t) \mu_{t-1} +\beta_t Y_t ~ \text{and}~\sigma_t^2 = \nu_t - \mu_t^2,~\text{where}~\nu_t = (1 - \beta_t) \nu_{t-1} + \beta_t Y_t^2\\
+{\bf POP:~ } &{\bf W}_ \text{new} = {\boldsymbol \Sigma}_ \text{new}^{-1} {\boldsymbol \Sigma} {\bf W} \quad \text{and} \quad {\boldsymbol b}_ \text{new} = {\boldsymbol \Sigma}_ \text{new}^{-1} \left( {\boldsymbol \Sigma b + \mu - \mu}_ \text{new} \right)
+\end{aligned}
+$$
 
 那么, 对应的不同的算法只需要跳过相应的环节即可。最后实现的效果关键代码如下:  
 
@@ -260,13 +265,13 @@ def forward(self, x, y):
 
 对应三种算法采用的参数如下表所示:  
 
-| Alg. | <img alt="$\alpha$" src="svgs/c745b9b57c145ec5577b82542b2df546.svg" align="middle" width="10.576500000000003pt" height="14.155350000000013pt"/> (learning rate) | <img alt="$\beta$" src="svgs/8217ed3c32a785f0b5aad4055f432ad8.svg" align="middle" width="10.165650000000005pt" height="22.831379999999992pt"/> |
+| Alg. | $\alpha$ (learning rate) | $\beta$ |
 |:---: |:--- |:--- |
-| SGD  | <img alt="$10^{-3.5}$" src="svgs/67458aea642a7f3cedef119dea644204.svg" align="middle" width="43.7217pt" height="26.76201000000001pt"/> | NaN |
-| ART  | <img alt="$10^{-3.5}$" src="svgs/67458aea642a7f3cedef119dea644204.svg" align="middle" width="43.7217pt" height="26.76201000000001pt"/><sup>[注]</sup> | <img alt="$10^{-4}$" src="svgs/6784e1fd68d75a57b35bd36247a1aefe.svg" align="middle" width="33.264990000000004pt" height="26.76201000000001pt"/> |
-| PopArt | <img alt="$10^{-2.5}$" src="svgs/a34c37af8b50636a17dc4923367a0f41.svg" align="middle" width="43.7217pt" height="26.76201000000001pt"/> | <img alt="$10^{-0.5}$" src="svgs/9dd3838976823b0a6b143415c7c12c88.svg" align="middle" width="43.7217pt" height="26.76201000000001pt"/> |
+| SGD  | $10^{-3.5}$ | NaN |
+| ART  | $10^{-3.5}$<sup>[注]</sup> | $10^{-4}$ |
+| PopArt | $10^{-2.5}$ | $10^{-0.5}$ |
 
-[注]\: 论文中给出的是<img alt="$10^{-2.5}$" src="svgs/a34c37af8b50636a17dc4923367a0f41.svg" align="middle" width="43.7217pt" height="26.76201000000001pt"/>, 但实际结果发现<img alt="$10^{-3.5}$" src="svgs/67458aea642a7f3cedef119dea644204.svg" align="middle" width="43.7217pt" height="26.76201000000001pt"/>更贴近论文图示中所给出的结果。
+[注]\: 论文中给出的是$10^{-2.5}$, 但实际结果发现$10^{-3.5}$更贴近论文图示中所给出的结果。
 
 在以上的参数设置下, 最后得到的结果如下图所示:  
 
