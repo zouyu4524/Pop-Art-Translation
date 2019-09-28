@@ -3,6 +3,7 @@ from discard.separate_model import LowerLayers, UpperLayer
 from utils import *
 import time
 import argparse
+import os
 
 
 def RMSELoss(yhat, y):
