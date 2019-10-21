@@ -29,7 +29,7 @@ PyTorch的实现方式决定了在实现机器学习相关算法时相较于Tens
 * `UnifiedModel`是以上两部分堆叠而成
 
 `LowerLayers`结构如下:  
-```
+```py
 class LowerLayers(torch.nn.Module):
     def __init__(self, n_in, H):
         super(LowerLayers, self).__init__()
@@ -46,7 +46,7 @@ class LowerLayers(torch.nn.Module):
         return h_tanh
 ```  
 `UpperLayer`结构如下:  
-```
+```py
 class UpperLayer(torch.nn.Module):
     def __init__(self, H, n_out):
         super(UpperLayer, self).__init__()
@@ -65,7 +65,7 @@ class UpperLayer(torch.nn.Module):
 
 * `LowerLayers` + `UpperLayer`模式
 
-```
+```py
 lower_layer = LowerLayers(16, 10)
 upper_layer = UpperLayer(10, 1)
 
@@ -84,7 +84,7 @@ opt_upper.step()
 
 * `UnifiedModel` 模式
 
-```
+```py
 unified_layer = UnifiedModel(16, 10, 1)
 
 loss_func = torch.nn.MSELoss()
@@ -107,7 +107,7 @@ with torch.no_grad():
 
 * `LowerLayers` + `UpperLayer` 模式
 
-```
+```py
 Parameter containing:
 tensor([[ -6.5463,  14.0888,  14.7738, -21.8954,  11.8038,  -9.8505,  -1.7764,
          -27.6084,  26.4289,  22.8444]], requires_grad=True)
@@ -117,7 +117,7 @@ tensor([85.1712], requires_grad=True)
 
 * `UnifiedModel` 模式
 
-```
+```py
 Parameter containing:
 tensor([[ -6.5463,  14.0888,  14.7738, -21.8954,  11.8038,  -9.8505,  -1.7764,
          -27.6084,  26.4289,  22.8444]], requires_grad=True)
@@ -168,7 +168,7 @@ tensor([85.1712], requires_grad=True)
 分别实现以上两种算法后, 进行对比测试: 两种算法分别以相同的随机数种子初始化两层网络权重, 对比单步的网络更新后`LowerLayers`网络的权重变化。结果如下:  
 
 * 以`LowerLayers`各层的bias对比来看
-```
+```py
 # 算法1: Pop-Art
 tensor([-0.1496, -0.1486, -0.2989,  0.0683, -0.1775, -0.2820,  0.2773, -0.2053,
         -0.0360,  0.0906])
@@ -178,7 +178,7 @@ tensor([-0.0687,  0.0421,  0.1568, -0.2215,  0.2655, -0.0343, -0.2649, -0.1710,
          0.2799,  0.2893])
 ```
 
-```
+```py
 # 算法2: Normalized SGD
 tensor([-0.1496, -0.1486, -0.2989,  0.0683, -0.1775, -0.2820,  0.2773, -0.2053,
         -0.0360,  0.0906])
@@ -189,12 +189,12 @@ tensor([-0.0687,  0.0421,  0.1568, -0.2215,  0.2655, -0.0343, -0.2649, -0.1710,
 ```
 可见两种算法下更新后的`LowerLayers`各层参数完全一致。另一方面, 由于两种算法对`UpperLayer`的处理方式不同, 其权重更新后有所不同, 但两个算法最后给出的predict结果则如下:  
 
-```
+```py
 # 算法1: Pop-Art
 tensor([3.9995])
 ```
 
-```
+```py
 # 算法2: Normalized SGD
 tensor([3.9995])
 ```
@@ -227,7 +227,7 @@ tensor([3.9995])
 那么, 对应的不同的算法只需要跳过相应的环节即可。最后实现的效果关键代码如下:  
 
 ART与POP功能分别划分为独立的执行单元: 
-```
+```py
 def art(self, y):
     self.mu_new = (1. - self.beta) * self.mu + self.beta * y
     self.nu = (1. - self.beta) * self.nu + self.beta * y**2
@@ -240,7 +240,7 @@ def pop(self):
 ```
 
 在网络前向传递的过程中根据算法种类确定ART与POP单元的调用情况。
-```
+```py
 def forward(self, x, y):
     if self.mode in ['POPART', 'ART']:
         self.art(y)
